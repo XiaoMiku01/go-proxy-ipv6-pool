@@ -1,11 +1,12 @@
 # Go Proxy IPV6 Pool
 
 Random ipv6 egress proxy server (support http/socks5)
+The Go language implementation of [zu1k/http-proxy-ipv6-pool](https://github.com/zu1k/http-proxy-ipv6-pool)
 
 ## Usage
 
 ```bash
-    go run . --cidr < your ipv6 cidr >  # e.g. 2001:399:8205:ae00::/64
+    go run . --port <port> --cidr < your ipv6 cidr >  # e.g. 2001:399:8205:ae00::/64
 ```
 
 ### Use as a proxy server

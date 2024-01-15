@@ -26,7 +26,7 @@ func init() {
 			// 使用指定的出口 IP 地址创建连接
 			localAddr, err := net.ResolveTCPAddr("tcp", outgoingIP+":0")
 			if err != nil {
-				log.Printf("Resolve local address error: %v", err)
+				log.Printf("[http] Resolve local address error: %v", err)
 				return req, nil
 			}
 			dialer := net.Dialer{
@@ -40,7 +40,7 @@ func init() {
 
 			newReq, err := http.NewRequest(req.Method, req.URL.String(), req.Body)
 			if err != nil {
-				log.Printf("New request error: %v", err)
+				log.Printf("[http] New request error: %v", err)
 				return req, nil
 			}
 			newReq.Header = req.Header
@@ -55,7 +55,7 @@ func init() {
 			// 发送 HTTP 请求
 			resp, err := client.Do(newReq)
 			if err != nil {
-				log.Printf("Send request error: %v", err)
+				log.Printf("[http] Send request error: %v", err)
 				return req, nil
 			}
 			return req, resp
@@ -74,7 +74,7 @@ func init() {
 			// 使用指定的出口 IP 地址创建连接
 			localAddr, err := net.ResolveTCPAddr("tcp", outgoingIP+":0")
 			if err != nil {
-				log.Printf("Resolve local address error: %v", err)
+				log.Printf("[http] Resolve local address error: %v", err)
 				return
 			}
 			dialer := net.Dialer{
@@ -84,7 +84,7 @@ func init() {
 			// 通过代理服务器建立到目标服务器的连接
 			server, err := dialer.Dial("tcp", req.URL.Host)
 			if err != nil {
-				log.Printf("Dial to %s error: %v", req.URL.Host, err)
+				log.Printf("[http] Dial to %s error: %v", req.URL.Host, err)
 				client.Write([]byte("HTTP/1.1 500 Internal Server Error\r\n\r\n"))
 				client.Close()
 				return

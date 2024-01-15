@@ -2,30 +2,58 @@ package main
 
 import (
 	"crypto/rand"
+	"flag"
+	"fmt"
 	"log"
 	"net"
-
-	"flag"
 	"net/http"
+	"sync"
 )
 
 var cidr string
+var port int
 
 func main() {
 
+	flag.IntVar(&port, "port", 52122, "server port")
 	flag.StringVar(&cidr, "cidr", "", "ipv6 cidr")
 	flag.Parse()
 
-	// 监听socks5并服务
+	if cidr == "" {
+		log.Fatal("cidr is empty")
+	}
+
+	httpPort := port
+	socks5Port := port + 1
+
+	if socks5Port > 65535 {
+		log.Fatal("port too large")
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
 	go func() {
-		err := socks5Server.ListenAndServe("tcp", "0.0.0.0:52122")
+		err := socks5Server.ListenAndServe("tcp", fmt.Sprintf("0.0.0.0:%d", socks5Port))
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("socks5 Server err:",err)
 		}
 
 	}()
-	// 在 8080 端口启动代理服务器
-	log.Fatal(http.ListenAndServe(":52123", httpProxy))
+	go func() {
+		err := http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", httpPort), httpProxy)
+		if err != nil {
+			log.Fatal("http Server err",err)
+		}
+	}()
+
+
+	log.Println("server running ...")
+	log.Printf("http running on 0.0.0.0:%d", httpPort)
+	log.Printf("socks5 running on 0.0.0.0:%d", socks5Port)
+	log.Printf("ipv6 cidr:[%s]", cidr)
+	wg.Wait()
+
 }
 
 func generateRandomIPv6(cidr string) (string, error) {

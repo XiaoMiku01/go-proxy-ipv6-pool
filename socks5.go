@@ -29,7 +29,7 @@ func init() {
 			// 使用指定的出口 IP 地址创建连接
 			localAddr, err := net.ResolveTCPAddr("tcp", outgoingIP+":0")
 			if err != nil {
-				log.Printf("Resolve local address error: %v", err)
+				log.Printf("[socks5] Resolve local address error: %v", err)
 				return nil, err
 			}
 			dialer := net.Dialer{
@@ -37,7 +37,7 @@ func init() {
 			}
 			// 通过代理服务器建立到目标服务器的连接
 
-			log.Println(addr, "via", outgoingIP)
+			log.Println("[socks5]",addr, "via", outgoingIP)
 			return dialer.DialContext(ctx, network, addr)
 		},
 	}
